@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import integration.dbhandler.InvalidItemIDException;
 import integration.dbhandler.SystemCreator;
 import integration.dbhandler.data.ItemDescription;
 import model.dto.RecentPurchaseInformation;
@@ -51,10 +52,13 @@ class ControllerTest {
 	void tearDown() throws Exception {
 		controller = null;
 		existingDescriptionApple = null;
+		existingDescriptionCoffee = null;
+		itemVatTax = null;
+		itemPrice = null;
 	}
 
 	@Test
-	void testCorrectCurrentSaleInfo() {
+	void testCorrectCurrentSaleInfo() throws InvalidItemIDException {
 		controller.startSale();
 		RecentPurchaseInformation saleInfo = controller.processItem(existingDescriptionApple.getID(), 1);
 
@@ -72,7 +76,7 @@ class ControllerTest {
 	}
 
 	@Test
-	void testCorrectPriceInfo() {
+	void testCorrectPriceInfo() throws InvalidItemIDException {
 		int purchasedQuantity = 3;
 		controller.startSale();
 		controller.processItem(existingDescriptionApple.getID(), purchasedQuantity);
@@ -93,7 +97,7 @@ class ControllerTest {
 	}
 
 	@Test
-	void testCorrectChangeAmount() {
+	void testCorrectChangeAmount() throws InvalidItemIDException {
 		controller.startSale();
 		controller.processItem(existingDescriptionApple.getID(), 1);
 		controller.processItem(existingDescriptionCoffee.getID(), 4);
@@ -105,6 +109,19 @@ class ControllerTest {
 		Amount actualChangeAmount = controller.processSale(amountPaid);
 		
 		assertEquals(expectedChangeAmount, actualChangeAmount, "Calculated change is incorrect. Expected " + expectedChangeAmount + ", got " + actualChangeAmount);
+	}
+	
+	@Test
+	void testInvalidIDException() {
+		controller.startSale();
+		
+		IdentificationNumber invalidID = new IdentificationNumber(12837480237408L);
+		try {
+			controller.processItem(invalidID, 5);
+			fail("Description got retrieved using invalid item ID. No exception was thrown.");
+		} catch (InvalidItemIDException e) {
+			assertTrue(e.getMessage().contains(invalidID.toString()), "Exception error message does not contain the invalid ID.");
+		}
 	}
 
 }

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import integration.dbhandler.InvalidItemIDException;
 import integration.dbhandler.SystemCreator;
 import integration.dbhandler.data.ItemDescription;
 import model.dto.PriceInformation;
@@ -63,7 +64,7 @@ class SaleTest {
 	}
 
 	@Test
-	void testAddOneItemToSale() {
+	void testAddOneItemToSale() throws InvalidItemIDException {
 		Amount itemPrice = new Amount(5);
 		Amount itemVatRate = stdVatRate;
 		Amount vatTax = itemPrice.multiply(itemVatRate);
@@ -94,7 +95,7 @@ class SaleTest {
 	}
 	
 	@Test 
-	void testAddMultipleIdenticalItemsToSale() {
+	void testAddMultipleIdenticalItemsToSale() throws InvalidItemIDException {
 		Amount itemPrice = new Amount(5);
 		Amount itemVatRate = stdVatRate;
 		Amount vatTax = itemPrice.multiply(itemVatRate);
@@ -125,7 +126,7 @@ class SaleTest {
 	}
 	
 	@Test 
-	void testAddMultipleDifferentItemsToSale() {
+	void testAddMultipleDifferentItemsToSale() throws InvalidItemIDException {
 		Amount applePrice = new Amount(5);
 		Amount coffeePrice = new Amount(42);
 		Amount appleVatRate = stdVatRate;
@@ -163,7 +164,7 @@ class SaleTest {
 	}
 	
 	@Test
-	void testAddMultipleItemsOneOperation() {
+	void testAddMultipleItemsOneOperation() throws InvalidItemIDException {
 		Amount itemPrice = new Amount(5);
 		Amount itemVatRate = stdVatRate;
 		Amount vatTax = itemPrice.multiply(itemVatRate);

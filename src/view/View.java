@@ -16,15 +16,20 @@ import model.util.IdentificationNumber;
  */
 public class View {
 	private Controller controller;
-	
+
 	private ErrorMessageHandler errorMsgHandler;
 	private ErrorLogHandler errorLog;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param controller The controller for the system.
+	 */
 	public View(Controller controller) {
 		this.controller = controller;
-		
+
 		errorMsgHandler = new ErrorMessageHandler();
-		
+
 		try {
 			errorLog = new ErrorLogHandler();
 		} catch (IOException e) {
@@ -83,7 +88,7 @@ public class View {
 				int quantity = rand.nextInt(9) + 1;
 
 				System.out.println("Purchasing " + quantity + " item(s) with id " + validIDs[i].toString());
-				RecentPurchaseInformation recentSaleInformation = enterItemIdentifier(new IdentificationNumber(2), quantity);
+				RecentPurchaseInformation recentSaleInformation = enterItemIdentifier(validIDs[i], quantity);
 				System.out.println(recentSaleInformation);
 			}
 
@@ -95,6 +100,29 @@ public class View {
 			System.out.println("Processing sale and printing receipt..\n");
 			enterAmountPaid(amountPaid);
 		} catch (InvalidItemIDException e) {
+			errorMsgHandler.showErrorMessage("Item with ID \'" + e.getInvalidID() + "\' is invalid.");
+			errorLog.logException(e);
+		}
+	}
+
+	public void testRunWithInvalidID(IdentificationNumber invalidID) {
+		startSale();
+
+		try {
+			System.out.println("Entering (invalid) ID " + invalidID + ".");
+			RecentPurchaseInformation recentSaleInformation = enterItemIdentifier(invalidID, 1);
+			System.out.println(recentSaleInformation);
+
+			PriceInformation totalPriceInfo = endSale();
+			System.out.println("[" + totalPriceInfo + "]" + "\n");
+			Amount amountPaid = totalPriceInfo.getTotalPrice().add(new Amount(100));
+			System.out.println("Customer pays " + amountPaid);
+
+			System.out.println("Processing sale and printing receipt..\n");
+			enterAmountPaid(amountPaid);
+		} catch (
+
+		InvalidItemIDException e) {
 			errorMsgHandler.showErrorMessage("Item with ID \'" + e.getInvalidID() + "\' is invalid.");
 			errorLog.logException(e);
 		}

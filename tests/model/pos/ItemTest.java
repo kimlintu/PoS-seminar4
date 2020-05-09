@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import integration.dbhandler.InvalidItemIDException;
 import integration.dbhandler.SystemCreator;
 import integration.dbhandler.data.ItemDescription;
 import model.dto.PurchasedItemInformation;
@@ -39,6 +40,9 @@ class ItemTest {
 
 	@AfterEach
 	void tearDown() throws Exception {
+		creator = null;
+		description = null;
+		item = null;
 	}
 	
 	@Test
@@ -60,7 +64,7 @@ class ItemTest {
 	}
 
 	@Test
-	void testNotEqual() {
+	void testNotEqual() throws InvalidItemIDException {
 		ItemDescription differentDescription = creator.getInventorySystem().retrieveItemDescription(new IdentificationNumber(666));
 		Item differentItem = new Item(differentDescription, 1);
 

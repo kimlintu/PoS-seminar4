@@ -29,6 +29,7 @@ class AmountTest {
 
 	@AfterEach
 	void tearDown() throws Exception {
+		wholeAmount = null;
 	}
 
 	@Test

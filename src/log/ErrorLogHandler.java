@@ -12,16 +12,39 @@ import java.time.format.FormatStyle;
  * Outputs the exception's error message to the log file.
  */
 public class ErrorLogHandler {
-	private final String LOG_FILE_PATH = "pos-error-log.txt";
+	private final String filepath;
 	private PrintWriter writer;
 
+	/**
+	 * Constructs a new instance to a standard file path specified in this class.
+	 * 
+	 * @throws IOException if the named file exists but is a directory rather than a
+	 *                     regular file, does not exist but cannot be created, or
+	 *                     cannot be opened for any other reason
+	 */
 	public ErrorLogHandler() throws IOException {
-		writer = new PrintWriter(new BufferedWriter(new FileWriter(LOG_FILE_PATH, true)));
+		this.filepath = "pos-error-log.txt";
+		writer = new PrintWriter(new BufferedWriter(new FileWriter(filepath, true)));
+	}
+
+	/**
+	 * Constructs a new instance that writes to the file specified with
+	 * <code>path</code>.
+	 * 
+	 * @param path Path to the file that should be written to.
+	 * @throws IOException if the named file exists but is a directory rather than a
+	 *                     regular file, does not exist but cannot be created, or
+	 *                     cannot be opened for any other reason.
+	 */
+	public ErrorLogHandler(String path) throws IOException {
+		this.filepath = path;
+		writer = new PrintWriter(new BufferedWriter(new FileWriter(filepath, true)));
 	}
 
 	/**
 	 * Prints the specified exception's error message, followed by the stack trace,
-	 * to the log file.
+	 * to the log file. If text already exists in the log, the message will be appended
+	 * and printed on a new line.
 	 * 
 	 * @param exceptionToLog The exception that should be logged.
 	 */
@@ -33,13 +56,13 @@ public class ErrorLogHandler {
 		writer.println(sb.toString());
 		exceptionToLog.printStackTrace(writer);
 		writer.println();
-		
+
 		writer.flush();
 	}
-	
+
 	private String getLocalTimeAndDate() {
 		DateTimeFormatter dateAndTime = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM);
-		
+
 		return LocalDateTime.now().format(dateAndTime);
 	}
 }

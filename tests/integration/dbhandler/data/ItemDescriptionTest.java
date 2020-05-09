@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import integration.dbhandler.InvalidItemIDException;
 import integration.dbhandler.SystemCreator;
 import integration.dbhandler.data.ItemDescription;
 import model.util.Amount;
@@ -33,20 +34,23 @@ class ItemDescriptionTest {
 
 	@AfterEach
 	void tearDown() throws Exception {
+		creator = null;
+		description = null;
 	}
 
 	@Test
 	void testEqual() {
-		ItemDescription identicalDescription = new ItemDescription("apple",
-				new Amount(5), new Amount(0.16), new IdentificationNumber(123));
+		ItemDescription identicalDescription = new ItemDescription("apple", new Amount(5), new Amount(0.16),
+				new IdentificationNumber(123));
 
 		assertTrue(description.equals(identicalDescription),
 				"Item descriptions with identical IDs " + "does not equal.");
 	}
 
 	@Test
-	void testNotEqual() {
-		ItemDescription differentDescription = creator.getInventorySystem().retrieveItemDescription(new IdentificationNumber(666));
+	void testNotEqual() throws InvalidItemIDException {
+		ItemDescription differentDescription = creator.getInventorySystem()
+				.retrieveItemDescription(new IdentificationNumber(666));
 
 		assertFalse(description.equals(differentDescription), "Item descriptions with different IDs " + "are equal.");
 	}

@@ -18,6 +18,7 @@ import model.util.IdentificationNumber;
 
 class InventorySystemTest {
 	private InventorySystem inventory;
+	private IdentificationNumber existingItemID;
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -31,36 +32,26 @@ class InventorySystemTest {
 	@BeforeEach
 	void setUp() throws Exception {
 		inventory = new InventorySystem();
+		existingItemID = new IdentificationNumber(123);
 	}
 
 	@AfterEach
 	void tearDown() throws Exception {
 		inventory = null;
+		existingItemID = null;
 	}
 
 	@Test
-	void testFindExistingItem() {
-		IdentificationNumber existingID = new IdentificationNumber(123);
-		ItemDescription description = inventory.retrieveItemDescription(existingID);
+	void testFindExistingItem() throws InvalidItemIDException {
+		ItemDescription description = inventory.retrieveItemDescription(existingItemID);
 
-		assertTrue(description.getID().equals(existingID), "ID " + existingID + " "
+		assertTrue(description.getID().equals(existingItemID), "ID " + existingItemID + " "
 				+ "does not match entry description retrieved from database with ID " + description.getID() + ".");
 	}
 
 	@Test
-	void testFindItemUsingInvalidID() {
-		IdentificationNumber invalidID = new IdentificationNumber(981237);
-		ItemDescription itemDescription = inventory.retrieveItemDescription(invalidID);
-
-		if (itemDescription != null) {
-			fail("Item " + itemDescription + " was retrieved using nonexisting ID " + invalidID + ", expected null. ");
-		}
-	}
-
-	@Test
-	void testUpdateQuantityOfStoredItem() {
+	void testUpdateQuantityOfStoredItem() throws InvalidItemIDException {
 		Sale sale = new Sale();
-		IdentificationNumber existingItemID = new IdentificationNumber(123);
 		int quantityBeforeUpdate = inventory.getAvailableQuantityOfItem(existingItemID);
 
 		sale.addItemToSale(inventory.retrieveItemDescription(existingItemID), 12);
@@ -74,6 +65,27 @@ class InventorySystemTest {
 		assertEquals(expectedQuantityAfterUpdate, quantityAfterUpdate,
 				"Quantity in inventory stock has not been updated for purchased item. Expected "
 						+ expectedQuantityAfterUpdate + " but got " + quantityAfterUpdate);
+	}
+	
+	@Test
+	void testUseInvalidID() {
+		IdentificationNumber invalidID = new IdentificationNumber(981237);
+		
+		try {
+			ItemDescription description = inventory.retrieveItemDescription(invalidID);
+			fail("Description got retrieved using invalid item ID. No exception was thrown.");
+		} catch (InvalidItemIDException e) {
+			assertTrue(e.getMessage().contains(invalidID.toString()), "Exception error message does not contain the invalid ID.");
+		}
+	}
+	
+	@Test
+	void testNoExceptionWithValidID() {
+		try {
+			ItemDescription description = inventory.retrieveItemDescription(existingItemID);
+		} catch(InvalidItemIDException e) {
+			fail("Exception was thrown when using valid ID.");
+		}
 	}
 
 }
