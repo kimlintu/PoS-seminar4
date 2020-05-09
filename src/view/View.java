@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Random;
 
 import controller.Controller;
+import controller.OperationFailedException;
 import integration.dbhandler.InvalidItemIDException;
 import log.ErrorLogHandler;
 import model.dto.PriceInformation;
@@ -78,17 +79,17 @@ public class View {
 
 	public void testRun() {
 		Random rand = new Random();
-		IdentificationNumber validIDs[] = { new IdentificationNumber(123), new IdentificationNumber(666),
+		IdentificationNumber itemIDs[] = { new IdentificationNumber(123), new IdentificationNumber(666),
 				new IdentificationNumber(492), new IdentificationNumber(876) };
 
 		startSale();
 
 		try {
-			for (int i = 0; i < validIDs.length; i++) {
+			for (int itemNr = 0; itemNr < itemIDs.length; itemNr++) {
 				int quantity = rand.nextInt(9) + 1;
 
-				System.out.println("Purchasing " + quantity + " item(s) with id " + validIDs[i].toString());
-				RecentPurchaseInformation recentSaleInformation = enterItemIdentifier(validIDs[i], quantity);
+				System.out.println("Purchasing " + quantity + " item(s) with id " + itemIDs[itemNr].toString());
+				RecentPurchaseInformation recentSaleInformation = enterItemIdentifier(itemIDs[itemNr], quantity);
 				System.out.println(recentSaleInformation);
 			}
 
@@ -99,8 +100,13 @@ public class View {
 
 			System.out.println("Processing sale and printing receipt..\n");
 			enterAmountPaid(amountPaid);
+
 		} catch (InvalidItemIDException e) {
 			errorMsgHandler.showErrorMessage("Item with ID \'" + e.getInvalidID() + "\' is invalid.");
+			errorLog.logException(e);
+
+		} catch (OperationFailedException e) {
+			errorMsgHandler.showErrorMessage("Item could not be processed.");
 			errorLog.logException(e);
 		}
 	}
@@ -120,6 +126,32 @@ public class View {
 
 			System.out.println("Processing sale and printing receipt..\n");
 			enterAmountPaid(amountPaid);
+		} catch (
+
+		InvalidItemIDException e) {
+			errorMsgHandler.showErrorMessage("Item with ID \'" + e.getInvalidID() + "\' is invalid.");
+			errorLog.logException(e);
+		}
+	}
+
+	public void testRunWithDatabaseError() {
+		IdentificationNumber databaseError = new IdentificationNumber(987987);
+		startSale();
+
+		try {
+			RecentPurchaseInformation recentSaleInformation = enterItemIdentifier(databaseError, 1);
+			System.out.println(recentSaleInformation);
+
+			PriceInformation totalPriceInfo = endSale();
+			System.out.println("[" + totalPriceInfo + "]" + "\n");
+			Amount amountPaid = totalPriceInfo.getTotalPrice().add(new Amount(100));
+			System.out.println("Customer pays " + amountPaid);
+
+			System.out.println("Processing sale and printing receipt..\n");
+			enterAmountPaid(amountPaid);
+		} catch (OperationFailedException e) {
+			errorMsgHandler.showErrorMessage("Item could not be processed.");
+			errorLog.logException(e);
 		} catch (
 
 		InvalidItemIDException e) {

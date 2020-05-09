@@ -19,6 +19,8 @@ public class InventorySystem {
 	private List<ItemData> itemDB;
 	private final Amount stdVatRate = new Amount(0.16);
 
+	private final IdentificationNumber dbError = new IdentificationNumber(987987);
+
 	/**
 	 * Constructs a new object and adds some data entries.
 	 */
@@ -45,8 +47,15 @@ public class InventorySystem {
 	 *                                any item in the inventory system.
 	 * @return The {@link ItemDescription} if its id matches the
 	 *         <code>itemID</code>, otherwise <code>null</code>.
+	 * @throws InventoryDBException If a connection to the inventory database could
+	 *                              not be established.
 	 */
-	public ItemDescription retrieveItemDescription(IdentificationNumber itemID) throws InvalidItemIDException {
+	public ItemDescription retrieveItemDescription(IdentificationNumber itemID)
+			throws InvalidItemIDException {
+		if (itemID.equals(dbError)) {
+			throw new InventoryDBException("Could not establish a connection to the database.");
+		}
+
 		for (ItemData itemDataObject : itemDB) {
 			if (itemDataObject.getItemDescription().getID().equals(itemID))
 				return itemDataObject.getItemDescription();

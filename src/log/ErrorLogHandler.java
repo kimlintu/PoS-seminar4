@@ -52,7 +52,7 @@ public class ErrorLogHandler {
 		StringBuilder sb = new StringBuilder("[" + getLocalTimeAndDate() + "]\n");
 		sb.append("ERROR:\n");
 		sb.append(exceptionToLog.getMessage() + "\n");
-		sb.append("Stack trace: \n");
+		sb.append("Stack trace:");
 		writer.println(sb.toString());
 		exceptionToLog.printStackTrace(writer);
 		writer.println();

@@ -22,9 +22,6 @@ class ViewTest {
 	private SystemCreator creator;
 	private Controller controller;
 
-	private ErrorMessageHandler errorMsgHandler;
-	private ErrorLogHandler errorLog;
-
 	private View view;
 
 	@BeforeAll
@@ -40,9 +37,6 @@ class ViewTest {
 		creator = new SystemCreator();
 		controller = new Controller(creator);
 		view = new View(controller);
-
-		errorMsgHandler = new ErrorMessageHandler();
-		errorLog = new ErrorLogHandler("test-log.txt");
 	}
 
 	@AfterEach
@@ -50,10 +44,6 @@ class ViewTest {
 		creator = null;
 		controller = null;
 		view = null;
-
-		errorMsgHandler = null;
-		errorLog = null;
-
 	}
 
 	@Test

@@ -87,5 +87,14 @@ class InventorySystemTest {
 			fail("Exception was thrown when using valid ID.");
 		}
 	}
-
+	
+	@Test
+	void testDBException() throws InvalidItemIDException {
+		try {
+			ItemDescription description = inventory.retrieveItemDescription(new IdentificationNumber(987987));
+			fail("No exception was thrown with unconnected system.");
+		} catch (InventoryDBException e) {
+			
+		}
+	}
 }

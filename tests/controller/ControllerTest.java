@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import integration.dbhandler.InvalidItemIDException;
+import integration.dbhandler.InventoryDBException;
 import integration.dbhandler.SystemCreator;
 import integration.dbhandler.data.ItemDescription;
 import model.dto.RecentPurchaseInformation;
@@ -121,6 +122,16 @@ class ControllerTest {
 			fail("Description got retrieved using invalid item ID. No exception was thrown.");
 		} catch (InvalidItemIDException e) {
 			assertTrue(e.getMessage().contains(invalidID.toString()), "Exception error message does not contain the invalid ID.");
+		}
+	}
+	
+	@Test
+	void testOperationFailedException() throws InvalidItemIDException {
+		try {
+			controller.processItem(new IdentificationNumber(987987), 1);
+			fail("No exception was thrown with unconnected system.");
+		} catch (OperationFailedException e) {
+			assertTrue(e.getCause().getClass().equals(InventoryDBException.class), "Cause of exception is not correct.");
 		}
 	}
 
