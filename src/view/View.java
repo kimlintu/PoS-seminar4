@@ -28,9 +28,9 @@ public class View {
 	 */
 	public View(Controller controller) {
 		this.controller = controller;
-
+		controller.addSaleObserver(new TotalRevenueView());
+		
 		errorMsgHandler = new ErrorMessageHandler();
-
 		try {
 			errorLog = new ErrorLogHandler();
 		} catch (IOException e) {

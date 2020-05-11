@@ -23,3 +23,17 @@ Caused by: integration.dbhandler.InventoryDBException: Could not establish a con
 	at controller.Controller.processItem(Controller.java:84)
 	... 3 more
 
+[May 11, 2020 11:15:48 AM]
+ERROR:
+Could not establish a connection to the database.
+Stack trace:
+controller.OperationFailedException: Could not establish a connection to the database.
+	at controller.Controller.processItem(Controller.java:94)
+	at view.View.enterItemIdentifier(View.java:68)
+	at view.View.testRunWithDatabaseError(View.java:142)
+	at startup.Main.main(Main.java:14)
+Caused by: integration.dbhandler.InventoryDBException: Could not establish a connection to the database.
+	at integration.dbhandler.InventorySystem.retrieveItemDescription(InventorySystem.java:56)
+	at controller.Controller.processItem(Controller.java:92)
+	... 3 more
+

@@ -11,6 +11,7 @@ public class Main {
 		Controller controller = new Controller(creator);
 		View view = new View(controller);
 		
-		view.testRunWithDatabaseError();
+		view.testRun();
+		view.testRun();
 	}
 }

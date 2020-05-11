@@ -1,5 +1,8 @@
 package controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import integration.cashregister.CashRegister;
 import integration.dbhandler.AccountingSystem;
 import integration.dbhandler.InvalidItemIDException;
@@ -16,6 +19,7 @@ import model.dto.RecentPurchaseInformation;
 import model.pos.Sale;
 import model.util.Amount;
 import model.util.IdentificationNumber;
+import view.CurrentSaleObserver;
 
 /**
  * Handles all the system operations in the program.
@@ -29,6 +33,8 @@ public class Controller {
 	private CashRegister cashRegister;
 
 	private Sale currentSale;
+
+	private List<CurrentSaleObserver> saleObservers;
 
 	/**
 	 * Creates a new instance and initializes references to the external systems
@@ -45,6 +51,8 @@ public class Controller {
 
 		printer = new Printer();
 		cashRegister = new CashRegister();
+
+		saleObservers = new ArrayList<>();
 	}
 
 	/**
@@ -70,8 +78,8 @@ public class Controller {
 	 * 
 	 * @param itemID   The unique id for the item that should be processed.
 	 * @param quantity Amount of items being processed.
-	 * @throws InvalidItemIDException If the specified item ID did not correspond to
-	 *                                any item in the inventory system.
+	 * @throws InvalidItemIDException   If the specified item ID did not correspond
+	 *                                  to any item in the inventory system.
 	 * @throws OperationFailedException If the operation failed to complete.
 	 * @return A {@link RecentPurchaseInformation} object containing information
 	 *         about the most recently purchased item and the running total.
@@ -79,7 +87,7 @@ public class Controller {
 	public RecentPurchaseInformation processItem(IdentificationNumber itemID, int quantity)
 			throws InvalidItemIDException {
 		ItemDescription itemDescription;
-		
+
 		try {
 			itemDescription = inventorySystem.retrieveItemDescription(itemID);
 		} catch (InventoryDBException e) {
@@ -115,8 +123,26 @@ public class Controller {
 		inventorySystem.updateQuantityOfItems(receipt);
 
 		printer.printReceipt(receipt);
+		
+		notifyObservers();
 
 		return amountOfChange;
+	}
+
+	/**
+	 * Adds the specified observer to this controller's list of sale observers. The
+	 * observer will be notified when a sale has been processed.
+	 * 
+	 * @param observer The {@link CurrentSaleObserver} that should get notified.
+	 */
+	public void addSaleObserver(CurrentSaleObserver observer) {
+		saleObservers.add(observer);
+	}
+	
+	private void notifyObservers() {
+		for(CurrentSaleObserver obs : saleObservers) {
+			obs.newPayment(currentSale.getPriceInformation().getTotalPrice());
+		}
 	}
 
 	private Amount updateBalanceInCashRegister(Amount totalPrice) {
