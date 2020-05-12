@@ -124,7 +124,7 @@ public class Controller {
 
 		printer.printReceipt(receipt);
 		
-		notifyObservers();
+		notifySaleObservers();
 
 		return amountOfChange;
 	}
@@ -139,7 +139,7 @@ public class Controller {
 		saleObservers.add(observer);
 	}
 	
-	private void notifyObservers() {
+	private void notifySaleObservers() {
 		for(CurrentSaleObserver obs : saleObservers) {
 			obs.newPayment(currentSale.getPriceInformation().getTotalPrice());
 		}

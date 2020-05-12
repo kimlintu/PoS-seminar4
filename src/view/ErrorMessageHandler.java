@@ -9,7 +9,7 @@ public class ErrorMessageHandler {
 	 * @param msg The message to display.
 	 */
 	void showErrorMessage(String msg) {
-		System.out.println("ERROR: " + msg);
+		System.out.println("\nERROR: " + msg + "\n");
 	}
 
 }

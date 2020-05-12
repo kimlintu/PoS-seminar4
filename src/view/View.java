@@ -29,7 +29,7 @@ public class View {
 	public View(Controller controller) {
 		this.controller = controller;
 		controller.addSaleObserver(new TotalRevenueView());
-		
+
 		errorMsgHandler = new ErrorMessageHandler();
 		try {
 			errorLog = new ErrorLogHandler();
@@ -77,6 +77,9 @@ public class View {
 		controller.processSale(amountPaid);
 	}
 
+	/**
+	 * A test run where no exceptions gets thrown.
+	 */
 	public void testRun() {
 		Random rand = new Random();
 		IdentificationNumber itemIDs[] = { new IdentificationNumber(123), new IdentificationNumber(666),
@@ -111,29 +114,9 @@ public class View {
 		}
 	}
 
-	public void testRunWithInvalidID(IdentificationNumber invalidID) {
-		startSale();
-
-		try {
-			System.out.println("Entering (invalid) ID " + invalidID + ".");
-			RecentPurchaseInformation recentSaleInformation = enterItemIdentifier(invalidID, 1);
-			System.out.println(recentSaleInformation);
-
-			PriceInformation totalPriceInfo = endSale();
-			System.out.println("[" + totalPriceInfo + "]" + "\n");
-			Amount amountPaid = totalPriceInfo.getTotalPrice().add(new Amount(100));
-			System.out.println("Customer pays " + amountPaid);
-
-			System.out.println("Processing sale and printing receipt..\n");
-			enterAmountPaid(amountPaid);
-		} catch (
-
-		InvalidItemIDException e) {
-			errorMsgHandler.showErrorMessage("Item with ID \'" + e.getInvalidID() + "\' is invalid.");
-			errorLog.logException(e);
-		}
-	}
-
+	/**
+	 * A test run where the database encounters an error.
+	 */
 	public void testRunWithDatabaseError() {
 		IdentificationNumber databaseError = new IdentificationNumber(987987);
 		startSale();
@@ -157,6 +140,51 @@ public class View {
 		InvalidItemIDException e) {
 			errorMsgHandler.showErrorMessage("Item with ID \'" + e.getInvalidID() + "\' is invalid.");
 			errorLog.logException(e);
+		}
+	}
+
+	/**
+	 * A test run where and invalid ID gets entered and the
+	 * {@link InvalidItemIDException} gets thrown.
+	 * 
+	 */
+	public void testRunWithInvalidID(IdentificationNumber invalidID) {
+		boolean saleInProgress = true;
+		startSale();
+
+		IdentificationNumber itemIDs[] = { new IdentificationNumber(123), new IdentificationNumber(666), invalidID,
+				new IdentificationNumber(876) };
+		int itemNr = 0;
+
+		while (saleInProgress) {
+			try {
+				if (itemNr < 4) {
+					int quantity = new Random().nextInt(5) + 1;
+					try {
+						System.out.println("Purchasing " + quantity + " item(s) with id " + itemIDs[itemNr].toString());
+						RecentPurchaseInformation recentPurchase = enterItemIdentifier(itemIDs[itemNr++],
+								new Random().nextInt(quantity) + 1);
+						System.out.println(recentPurchase);
+					} catch (InvalidItemIDException e) {
+						errorMsgHandler.showErrorMessage("Item with ID \'" + e.getInvalidID() + "\' is invalid.");
+						errorLog.logException(e);
+					}
+				} else {
+					saleInProgress = false;
+
+					PriceInformation totalPriceInfo = endSale();
+					System.out.println("[" + totalPriceInfo + "]" + "\n");
+					Amount amountPaid = totalPriceInfo.getTotalPrice()
+							.add(new Amount(new Random().nextDouble() * 200 + 1));
+					System.out.println("Customer pays " + amountPaid);
+
+					System.out.println("Processing sale and printing receipt..\n");
+					enterAmountPaid(amountPaid);
+				}
+			} catch (OperationFailedException e) {
+				errorMsgHandler.showErrorMessage("Item could not be processed.");
+				errorLog.logException(e);
+			}
 		}
 	}
 }
