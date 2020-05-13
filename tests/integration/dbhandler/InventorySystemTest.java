@@ -93,7 +93,7 @@ class InventorySystemTest {
 		try {
 			ItemDescription description = inventory.retrieveItemDescription(new IdentificationNumber(987987));
 			fail("No exception was thrown with unconnected system.");
-		} catch (InventoryDBException e) {
+		} catch (InventoryException e) {
 			
 		}
 	}

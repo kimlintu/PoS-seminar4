@@ -2,6 +2,7 @@ package integration.dbhandler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import integration.dbhandler.data.ItemData;
 import integration.dbhandler.data.ItemDescription;
@@ -47,13 +48,12 @@ public class InventorySystem {
 	 *                                any item in the inventory system.
 	 * @return The {@link ItemDescription} if its id matches the
 	 *         <code>itemID</code>, otherwise <code>null</code>.
-	 * @throws InventoryDBException If a connection to the inventory database could
-	 *                              not be established.
+	 * @throws InventoryException If a connection to the inventory database could
+	 *                            not be established.
 	 */
-	public ItemDescription retrieveItemDescription(IdentificationNumber itemID)
-			throws InvalidItemIDException {
+	public ItemDescription retrieveItemDescription(IdentificationNumber itemID) throws InvalidItemIDException {
 		if (itemID.equals(dbError)) {
-			throw new InventoryDBException("Could not establish a connection to the database.");
+			throw new InventoryException("Could not establish a connection to the database.");
 		}
 
 		for (ItemData itemDataObject : itemDB) {
@@ -65,13 +65,18 @@ public class InventorySystem {
 	}
 
 	/**
-	 * Updates the quantity of the items in the database that was processed in the
-	 * sale.
+	 * Updates the quantity of the items that was processed in the sale.
 	 * 
 	 * @param saleInfo The information about the completed sale. Contains the list
 	 *                 of sold items.
+	 * @throws InventoryException If a connection to the inventory database could
+	 *                            not be established.
 	 */
 	public void updateQuantityOfItems(Receipt saleInfo) {
+		if (new Random().nextInt(10) == 1) {
+			throw new InventoryException("Could not establish a connection to the database.");
+		}
+
 		List<PurchasedItemInformation> itemList = saleInfo.getListOfSoldItems();
 
 		for (PurchasedItemInformation itemInfo : itemList) {
@@ -90,8 +95,14 @@ public class InventorySystem {
 	 * 
 	 * @param itemID The unique ID of the corresponding item.
 	 * @return The available quantity as an <code>int</code>.
+	 * @throws InventoryException If a connection to the inventory database could
+	 *                            not be established.
 	 */
 	public int getAvailableQuantityOfItem(IdentificationNumber itemID) {
+		if (new Random().nextInt(10) == 1) {
+			throw new InventoryException("Could not establish a connection to the database.");
+		}
+
 		for (ItemData itemData : itemDB) {
 			if (matches(itemID, itemData)) {
 				return itemData.getAvailableQuantity();

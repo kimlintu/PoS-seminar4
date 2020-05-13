@@ -18,7 +18,7 @@ import model.util.IdentificationNumber;
 public class View {
 	private Controller controller;
 
-	private ErrorMessageHandler errorMsgHandler;
+	private DisplayErrorMessageHandler errorMsgHandler;
 	private ErrorLogHandler errorLog;
 
 	/**
@@ -30,7 +30,7 @@ public class View {
 		this.controller = controller;
 		controller.addSaleObserver(new TotalRevenueView());
 
-		errorMsgHandler = new ErrorMessageHandler();
+		errorMsgHandler = new DisplayErrorMessageHandler();
 		try {
 			errorLog = new ErrorLogHandler();
 		} catch (IOException e) {
@@ -62,9 +62,10 @@ public class View {
 	 * @param itemID   The ID of the item that should be processed.
 	 * @param quantity Quantity of the item being purchased.
 	 * @return a {@link RecentPurchaseInformation}
+	 * @throws OperationFailedException If this operation failed to complete.
 	 */
 	public RecentPurchaseInformation enterItemIdentifier(IdentificationNumber itemID, int quantity)
-			throws InvalidItemIDException {
+			throws InvalidItemIDException, OperationFailedException {
 		return controller.processItem(itemID, quantity);
 	}
 
@@ -89,9 +90,9 @@ public class View {
 
 		try {
 			for (int itemNr = 0; itemNr < itemIDs.length; itemNr++) {
-				int quantity = rand.nextInt(9) + 1;
+				int quantity = rand.nextInt(4) + 1;
 
-				System.out.println("Purchasing " + quantity + " item(s) with id " + itemIDs[itemNr].toString());
+				System.out.println("*Purchasing " + quantity + " item(s) with id " + itemIDs[itemNr].toString() + "*");
 				RecentPurchaseInformation recentSaleInformation = enterItemIdentifier(itemIDs[itemNr], quantity);
 				System.out.println(recentSaleInformation);
 			}
@@ -99,9 +100,9 @@ public class View {
 			PriceInformation totalPriceInfo = endSale();
 			System.out.println("[" + totalPriceInfo + "]" + "\n");
 			Amount amountPaid = totalPriceInfo.getTotalPrice().add(new Amount(rand.nextDouble() * 200 + 1));
-			System.out.println("Customer pays " + amountPaid);
+			System.out.println("*Customer pays " + amountPaid + "*");
 
-			System.out.println("Processing sale and printing receipt..\n");
+			System.out.println("*Processing sale and printing receipt..*\n");
 			enterAmountPaid(amountPaid);
 
 		} catch (InvalidItemIDException e) {
@@ -109,7 +110,7 @@ public class View {
 			errorLog.logException(e);
 
 		} catch (OperationFailedException e) {
-			errorMsgHandler.showErrorMessage("Item could not be processed.");
+			errorMsgHandler.showErrorMessage("Sale could not complete, please contact \nthe system administrator.");
 			errorLog.logException(e);
 		}
 	}
@@ -133,7 +134,7 @@ public class View {
 			System.out.println("Processing sale and printing receipt..\n");
 			enterAmountPaid(amountPaid);
 		} catch (OperationFailedException e) {
-			errorMsgHandler.showErrorMessage("Item could not be processed.");
+			errorMsgHandler.showErrorMessage("Sale could not complete, please contact \nthe system administrator.");
 			errorLog.logException(e);
 		} catch (
 
@@ -159,14 +160,15 @@ public class View {
 		while (saleInProgress) {
 			try {
 				if (itemNr < 4) {
-					int quantity = new Random().nextInt(5) + 1;
+					int quantity = new Random().nextInt(2) + 1;
+					
 					try {
-						System.out.println("Purchasing " + quantity + " item(s) with id " + itemIDs[itemNr].toString());
+						System.out.println("*Purchasing " + quantity + " item(s) with id " + itemIDs[itemNr].toString() + "*");
 						RecentPurchaseInformation recentPurchase = enterItemIdentifier(itemIDs[itemNr++],
-								new Random().nextInt(quantity) + 1);
+								quantity);
 						System.out.println(recentPurchase);
 					} catch (InvalidItemIDException e) {
-						errorMsgHandler.showErrorMessage("Item with ID \'" + e.getInvalidID() + "\' is invalid.");
+						errorMsgHandler.showErrorMessage("Item with ID \'" + e.getInvalidID() + "\' is invalid. Please try again.");
 						errorLog.logException(e);
 					}
 				} else {
@@ -176,13 +178,13 @@ public class View {
 					System.out.println("[" + totalPriceInfo + "]" + "\n");
 					Amount amountPaid = totalPriceInfo.getTotalPrice()
 							.add(new Amount(new Random().nextDouble() * 200 + 1));
-					System.out.println("Customer pays " + amountPaid);
+					System.out.println("*Customer pays " + amountPaid + "*");
 
-					System.out.println("Processing sale and printing receipt..\n");
+					System.out.println("*Processing sale and printing receipt..*\n");
 					enterAmountPaid(amountPaid);
 				}
 			} catch (OperationFailedException e) {
-				errorMsgHandler.showErrorMessage("Item could not be processed.");
+				errorMsgHandler.showErrorMessage("Sale could not complete, please contact \nthe system administrator.");
 				errorLog.logException(e);
 			}
 		}

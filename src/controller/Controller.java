@@ -6,7 +6,7 @@ import java.util.List;
 import integration.cashregister.CashRegister;
 import integration.dbhandler.AccountingSystem;
 import integration.dbhandler.InvalidItemIDException;
-import integration.dbhandler.InventoryDBException;
+import integration.dbhandler.InventoryException;
 import integration.dbhandler.InventorySystem;
 import integration.dbhandler.SaleLog;
 import integration.dbhandler.SystemCreator;
@@ -80,25 +80,26 @@ public class Controller {
 	 * @param quantity Amount of items being processed.
 	 * @throws InvalidItemIDException   If the specified item ID did not correspond
 	 *                                  to any item in the inventory system.
-	 * @throws OperationFailedException If the operation failed to complete.
+	 * @throws OperationFailedException If the item description could not be
+	 *                                  retrieved from the external inventory
+	 *                                  system.
 	 * @return A {@link RecentPurchaseInformation} object containing information
 	 *         about the most recently purchased item and the running total.
 	 */
 	public RecentPurchaseInformation processItem(IdentificationNumber itemID, int quantity)
-			throws InvalidItemIDException {
+			throws InvalidItemIDException, OperationFailedException {
 		ItemDescription itemDescription;
 
 		try {
 			itemDescription = inventorySystem.retrieveItemDescription(itemID);
-		} catch (InventoryDBException e) {
-			throw new OperationFailedException(e.getMessage(), e);
+
+			PurchasedItemInformation itemInfo = currentSale.addItemToSale(itemDescription, quantity);
+			RecentPurchaseInformation recentPurchase = new RecentPurchaseInformation(itemInfo,
+					currentSale.getPriceInformation());
+			return recentPurchase;
+		} catch (InventoryException e) {
+			throw new OperationFailedException("Could not retrieve item description.", e);
 		}
-
-		PurchasedItemInformation itemInfo = currentSale.addItemToSale(itemDescription, quantity);
-		RecentPurchaseInformation recentPurchase = new RecentPurchaseInformation(itemInfo,
-				currentSale.getPriceInformation());
-
-		return recentPurchase;
 	}
 
 	/**
@@ -107,6 +108,9 @@ public class Controller {
 	 * Finally, it prints the receipt and returns the amount of change to give to
 	 * the customer.
 	 * 
+	 * @throws OperationFailedException If the item description could not be
+	 *                                  retrieved from the external inventory
+	 *                                  system.
 	 * @param amountPaid The amount paid by the customer.
 	 * @return The amount of change to be received by the customer.
 	 */
@@ -118,12 +122,16 @@ public class Controller {
 
 		Receipt receipt = currentSale.processSale(amountPaid, amountOfChange);
 
-		accountingSystem.updateAccounting(receipt);
-		saleLog.logSale(receipt);
-		inventorySystem.updateQuantityOfItems(receipt);
+		try {
+			inventorySystem.updateQuantityOfItems(receipt);
+			accountingSystem.updateAccounting(receipt);
+			saleLog.logSale(receipt);
+		} catch (InventoryException e) {
+			throw new OperationFailedException(e.getMessage(), e);
+		}
 
 		printer.printReceipt(receipt);
-		
+
 		notifySaleObservers();
 
 		return amountOfChange;
@@ -138,9 +146,9 @@ public class Controller {
 	public void addSaleObserver(CurrentSaleObserver observer) {
 		saleObservers.add(observer);
 	}
-	
+
 	private void notifySaleObservers() {
-		for(CurrentSaleObserver obs : saleObservers) {
+		for (CurrentSaleObserver obs : saleObservers) {
 			obs.newPayment(currentSale.getPriceInformation().getTotalPrice());
 		}
 	}

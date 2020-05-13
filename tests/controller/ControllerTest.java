@@ -10,7 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import integration.dbhandler.InvalidItemIDException;
-import integration.dbhandler.InventoryDBException;
+import integration.dbhandler.InventoryException;
 import integration.dbhandler.SystemCreator;
 import integration.dbhandler.data.ItemDescription;
 import model.dto.RecentPurchaseInformation;
@@ -131,7 +131,7 @@ class ControllerTest {
 			controller.processItem(new IdentificationNumber(987987), 1);
 			fail("No exception was thrown with unconnected system.");
 		} catch (OperationFailedException e) {
-			assertTrue(e.getCause().getClass().equals(InventoryDBException.class), "Cause of exception is not correct.");
+			assertTrue(e.getCause().getClass().equals(InventoryException.class), "Cause of exception is not correct.");
 		}
 	}
 

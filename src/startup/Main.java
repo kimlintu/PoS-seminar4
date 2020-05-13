@@ -12,6 +12,11 @@ public class Main {
 		Controller controller = new Controller(creator);
 		View view = new View(controller);
 
-		view.testRunWithInvalidID(new IdentificationNumber(98734342L));
+		view.testRunWithInvalidID(new IdentificationNumber(98734342));
+		view.testRunWithDatabaseError();
+		
+		view.testRun();
+		view.testRun();
+		view.testRun();
 	}
 }

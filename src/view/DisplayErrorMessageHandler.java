@@ -2,7 +2,7 @@ package view;
 /**
  * Handles the error messages displayed to the user of the system. 
  */
-public class ErrorMessageHandler {
+public class DisplayErrorMessageHandler {
 	
 	/**
 	 * Displays the specified message to system output.
