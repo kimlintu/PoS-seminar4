@@ -8,11 +8,13 @@ public class SystemCreator {
 	private AccountingSystem accountingSystem;
 	private SaleLog saleLog;
 	
+	private static final SystemCreator SYSTEM_CREATOR = new SystemCreator();
+	
 	/**
 	 * Constructs a system creator and creates new objects
 	 * for the external systems.
 	 */
-	public SystemCreator() {
+	private SystemCreator() {
 		inventorySystem = new InventorySystem();
 		accountingSystem = new AccountingSystem();
 		saleLog = new SaleLog();
@@ -43,5 +45,12 @@ public class SystemCreator {
 	 */
 	public SaleLog getSaleLog() {
 		return saleLog;
+	}
+	
+	/**
+	 * @return the instance of this class as a singleton.
+	 */
+	public static SystemCreator getCreator() {
+		return SYSTEM_CREATOR;
 	}
 }

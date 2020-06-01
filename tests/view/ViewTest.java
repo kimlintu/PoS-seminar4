@@ -33,7 +33,7 @@ class ViewTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		creator = new SystemCreator();
+		creator = SystemCreator.getCreator();
 		controller = new Controller(creator);
 		view = new View(controller);
 	}

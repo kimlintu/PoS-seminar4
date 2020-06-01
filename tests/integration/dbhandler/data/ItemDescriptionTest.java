@@ -28,7 +28,7 @@ class ItemDescriptionTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		creator = new SystemCreator();
+		creator = SystemCreator.getCreator();
 		description = creator.getInventorySystem().retrieveItemDescription(new IdentificationNumber(123));
 	}
 

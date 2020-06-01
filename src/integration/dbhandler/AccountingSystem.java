@@ -7,18 +7,17 @@ import model.dto.Receipt;
  *
  */
 public class AccountingSystem {
-	
 	/**
 	 * Constructs a new object.
 	 */
 	AccountingSystem() {
-		
 	}
-	
+
 	/**
-	 * Updates relevant information stored in this system pertaining
-	 * to the completed sale.
-	 * @param completedSaleInformation A container 
+	 * Updates relevant information stored in this system pertaining to the
+	 * completed sale.
+	 * 
+	 * @param completedSaleInformation A container
 	 */
 	public void updateAccounting(Receipt completedSaleInformation) {
 	}

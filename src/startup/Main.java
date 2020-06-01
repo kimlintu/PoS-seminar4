@@ -7,7 +7,7 @@ import view.View;
 
 public class Main {
 	public static void main(String[] args) {
-		SystemCreator creator = new SystemCreator();
+		SystemCreator creator = SystemCreator.getCreator();
 		
 		Controller controller = new Controller(creator);
 		View view = new View(controller);

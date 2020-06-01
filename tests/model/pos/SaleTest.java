@@ -36,7 +36,7 @@ class SaleTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		creator = new SystemCreator();
+		creator = SystemCreator.getCreator();
 		sale = new Sale();
 		
 		stdVatRate = new Amount(0.16);

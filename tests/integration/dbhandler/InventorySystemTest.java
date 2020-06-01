@@ -19,6 +19,7 @@ import model.util.IdentificationNumber;
 class InventorySystemTest {
 	private InventorySystem inventory;
 	private IdentificationNumber existingItemID;
+	private SystemCreator creator;
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -31,12 +32,14 @@ class InventorySystemTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		inventory = new InventorySystem();
+		creator = SystemCreator.getCreator();
+		inventory = creator.getInventorySystem();
 		existingItemID = new IdentificationNumber(123);
 	}
 
 	@AfterEach
 	void tearDown() throws Exception {
+		creator = null;
 		inventory = null;
 		existingItemID = null;
 	}
