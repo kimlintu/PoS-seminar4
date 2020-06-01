@@ -1,5 +1,6 @@
 package view;
 
+import model.observer.CurrentSaleObserver;
 import model.util.Amount;
 
 /**

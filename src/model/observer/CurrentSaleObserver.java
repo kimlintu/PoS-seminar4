@@ -1,4 +1,4 @@
-package view;
+package model.observer;
 
 import model.util.Amount;
 

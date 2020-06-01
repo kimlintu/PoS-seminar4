@@ -8,6 +8,7 @@ import integration.dbhandler.data.ItemDescription;
 import model.dto.PriceInformation;
 import model.dto.PurchasedItemInformation;
 import model.dto.Receipt;
+import model.observer.CurrentSaleObserver;
 import model.util.Amount;
 
 /**
@@ -17,6 +18,8 @@ import model.util.Amount;
 public class Sale {
 	private List<Item> itemList;
 	private TotalPrice totalPrice;
+	
+	private List<CurrentSaleObserver> saleObservers = new ArrayList<>();
 
 	/**
 	 * Creates a new instance. The instance will have a list that contains the items
@@ -65,7 +68,7 @@ public class Sale {
 
 	/**
 	 * Complete the sale and create a receipt containing the complete sale
-	 * information.
+	 * information. Also notifies the observers of the provided payment.
 	 * 
 	 * @param amountPaid     The amount paid by the customer.
 	 * @param amountOfChange The amount of change that the customer should receive.
@@ -74,7 +77,22 @@ public class Sale {
 	public Receipt processSale(Amount amountPaid, Amount amountOfChange) {
 		Receipt receipt = new Receipt(itemList, totalPrice.getPriceInfo(), amountPaid, amountOfChange);
 
+		notifySaleObservers(amountPaid);
 		return receipt;
+	}
+	
+	/**
+	 * Adds the list of the provided {@link CurrentSaleObserver}s to this object.
+	 * @param saleObservers A list of <code>CurrentSaleObserver</code>s.
+	 */
+	public void addSaleObservers(List<CurrentSaleObserver> saleObservers) {
+		this.saleObservers.addAll(saleObservers);
+	}
+	
+	private void notifySaleObservers(Amount amountPaid) {
+		for(CurrentSaleObserver saleObs : saleObservers) {
+			saleObs.newPayment(amountPaid);
+		}
 	}
 
 	private void updateQuantityOfItemInList(Item item, int quantity) {

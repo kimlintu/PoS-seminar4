@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import controller.Controller;
 import integration.dbhandler.InvalidItemIDException;
 import integration.dbhandler.SystemCreator;
-import log.ErrorLogHandler;
 import model.util.IdentificationNumber;
 
 class ViewTest {

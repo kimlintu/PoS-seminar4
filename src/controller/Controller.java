@@ -16,10 +16,10 @@ import model.dto.PriceInformation;
 import model.dto.PurchasedItemInformation;
 import model.dto.Receipt;
 import model.dto.RecentPurchaseInformation;
+import model.observer.CurrentSaleObserver;
 import model.pos.Sale;
 import model.util.Amount;
 import model.util.IdentificationNumber;
-import view.CurrentSaleObserver;
 
 /**
  * Handles all the system operations in the program.
@@ -57,10 +57,12 @@ public class Controller {
 
 	/**
 	 * Starts a new sale and initializes the <code>Sale</code> object in this
-	 * controller with that new sale.
+	 * controller with that new sale. Also adds this controllers
+	 * {@link CurrentSaleObserver}s to the sale object.
 	 */
 	public void startSale() {
 		currentSale = new Sale();
+		currentSale.addSaleObservers(saleObservers);
 	}
 
 	/**
@@ -132,8 +134,6 @@ public class Controller {
 
 		printer.printReceipt(receipt);
 
-		notifySaleObservers();
-
 		return amountOfChange;
 	}
 
@@ -145,12 +145,6 @@ public class Controller {
 	 */
 	public void addSaleObserver(CurrentSaleObserver observer) {
 		saleObservers.add(observer);
-	}
-
-	private void notifySaleObservers() {
-		for (CurrentSaleObserver obs : saleObservers) {
-			obs.newPayment(currentSale.getPriceInformation().getTotalPrice());
-		}
 	}
 
 	private Amount updateBalanceInCashRegister(Amount totalPrice) {
