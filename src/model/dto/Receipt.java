@@ -32,8 +32,8 @@ public class Receipt {
 	 * @param changeAmount The amount of change the customer should receive after
 	 *                     payment.
 	 */
-	public Receipt(List<Item> itemList, PriceInformation priceInfo, Amount amountPaid, Amount changeAmount) {
-		this.itemList = new ArrayList<>();
+	public Receipt(List<PurchasedItemInformation> itemList, PriceInformation priceInfo, Amount amountPaid, Amount changeAmount) {
+		this.itemList = itemList;
 		this.priceInfo = priceInfo;
 		this.amountPaid = amountPaid;
 		this.changeAmount = changeAmount;
@@ -41,8 +41,6 @@ public class Receipt {
 		this.dateOfSale = LocalDate.now();
 
 		this.store = new Store("Real Store", "Real Street 123");
-
-		createImmutableItemList(itemList);
 	}
 
 	/**
@@ -98,18 +96,6 @@ public class Receipt {
 	 */
 	public Store getStore() {
 		return store;
-	}
-
-	/**
-	 * Creates a list with immutable item objects from the items that has been sold.
-	 * 
-	 * @param itemList The list of items that was sold.
-	 * @return a new list containing immutable data about each sold item
-	 */
-	private void createImmutableItemList(List<Item> itemList) {
-		for (Item i : itemList) {
-			this.itemList.add(i.getItemInformation());
-		}
 	}
 
 	/**

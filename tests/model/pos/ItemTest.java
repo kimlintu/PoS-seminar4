@@ -1,6 +1,8 @@
 package model.pos;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.AfterAll;
@@ -12,8 +14,9 @@ import org.junit.jupiter.api.Test;
 import integration.dbhandler.InvalidItemIDException;
 import integration.dbhandler.SystemCreator;
 import integration.dbhandler.data.ItemDescription;
+import integration.dbhandler.discount.Discount;
+import integration.dbhandler.discount.QuantityDiscount;
 import model.dto.PurchasedItemInformation;
-import model.pos.Item;
 import model.util.Amount;
 import model.util.IdentificationNumber;
 
@@ -55,7 +58,22 @@ class ItemTest {
 				"Calculated price " + itemInfo.getAccumulatedPrice() + " is not correct. Should be " + calculatedPrice);
 
 	}
-
+	
+	@Test
+	void applyQuantityDiscount() {
+		int quantity = 5;
+		Item item = new Item(description, quantity);
+		Amount originalUnitPrice = item.getUnitPrice();
+		
+		Discount discount = new QuantityDiscount((short) 3, new Amount(0.1));
+		Amount discountPrice = (originalUnitPrice.multiply(discount.getRate())).multiply(quantity); 
+		Amount expectedDiscountedPrice = (originalUnitPrice.multiply(quantity)).subtract(discountPrice);
+		
+		item.applyDiscount(discount);
+		Amount actualDiscountedPrice = item.getUnitPrice().multiply(quantity);
+		assertEquals(expectedDiscountedPrice, actualDiscountedPrice, "Actual discounted price does not match expected price.");
+	}
+	
 	@Test
 	void testEqual() {
 		Item identicalItem = new Item(description, 1);

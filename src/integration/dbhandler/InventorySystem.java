@@ -31,11 +31,11 @@ public class InventorySystem {
 		createDatabaseEntry(new ItemData(
 				new ItemDescription("apple", new Amount(5), stdVatRate, new IdentificationNumber(123)), 54));
 		createDatabaseEntry(new ItemData(
-				new ItemDescription("coffee", new Amount(42), stdVatRate, new IdentificationNumber(666)), 12));
+				new ItemDescription("coffee", new Amount(42), stdVatRate, new IdentificationNumber(666)), 87));
 		createDatabaseEntry(new ItemData(
-				new ItemDescription("orange juice", new Amount(12), stdVatRate, new IdentificationNumber(492)), 5));
+				new ItemDescription("orange juice", new Amount(12), stdVatRate, new IdentificationNumber(492)), 56));
 		createDatabaseEntry(new ItemData(
-				new ItemDescription("chocolate bar", new Amount(10), stdVatRate, new IdentificationNumber(876)), 1));
+				new ItemDescription("chocolate bar", new Amount(10), stdVatRate, new IdentificationNumber(876)), 100));
 	}
 
 	/**
@@ -73,10 +73,6 @@ public class InventorySystem {
 	 *                            not be established.
 	 */
 	public void updateQuantityOfItems(Receipt saleInfo) {
-		if (new Random().nextInt(10) == 1) {
-			throw new InventoryException("Could not establish a connection to the database.");
-		}
-
 		List<PurchasedItemInformation> itemList = saleInfo.getListOfSoldItems();
 
 		for (PurchasedItemInformation itemInfo : itemList) {
@@ -99,10 +95,6 @@ public class InventorySystem {
 	 *                            not be established.
 	 */
 	public int getAvailableQuantityOfItem(IdentificationNumber itemID) {
-		if (new Random().nextInt(10) == 1) {
-			throw new InventoryException("Could not establish a connection to the database.");
-		}
-
 		for (ItemData itemData : itemDB) {
 			if (matches(itemID, itemData)) {
 				return itemData.getAvailableQuantity();

@@ -114,6 +114,45 @@ public class View {
 			errorLog.logException(e);
 		}
 	}
+	
+	public void testRunWithDiscounts() {
+		Random rand = new Random();
+		IdentificationNumber itemIDs[] = { new IdentificationNumber(123), new IdentificationNumber(666),
+				new IdentificationNumber(492), new IdentificationNumber(876) };
+
+		startSale();
+
+		try {
+			for (int itemNr = 0; itemNr < itemIDs.length; itemNr++) {
+				int quantity = rand.nextInt(4) + 1;
+
+				System.out.println("*Purchasing " + quantity + " item(s) with id " + itemIDs[itemNr].toString() + "*");
+				RecentPurchaseInformation recentSaleInformation = enterItemIdentifier(itemIDs[itemNr], quantity);
+				System.out.println(recentSaleInformation);
+			}
+
+			PriceInformation totalPriceInfo = endSale();
+			System.out.println("[" + totalPriceInfo + "]" + "\n");
+			
+			System.out.println("*Available discounts gets applied to purchased items*");
+			PriceInformation discountedPrice = controller.applyDiscounts();
+			System.out.println("[" + discountedPrice + "]" + "\n");
+			
+			Amount amountPaid = totalPriceInfo.getTotalPrice().add(new Amount(rand.nextDouble() * 100 + 1));
+			System.out.println("*Customer pays " + amountPaid + "*");
+
+			System.out.println("*Processing sale and printing receipt..*\n");
+			enterAmountPaid(amountPaid);
+
+		} catch (InvalidItemIDException e) {
+			errorMsgHandler.showErrorMessage("Item with ID \'" + e.getInvalidID() + "\' is invalid.");
+			errorLog.logException(e);
+
+		} catch (OperationFailedException e) {
+			errorMsgHandler.showErrorMessage("Sale could not complete, please contact \nthe system administrator.");
+			errorLog.logException(e);
+		}
+	}
 
 	/**
 	 * A test run where the database encounters an error.

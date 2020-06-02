@@ -1,6 +1,7 @@
 package model.pos;
 
 import integration.dbhandler.data.ItemDescription;
+import integration.dbhandler.discount.Discount;
 import model.dto.PurchasedItemInformation;
 import model.util.Amount;
 
@@ -12,8 +13,11 @@ import model.util.Amount;
 public class Item {
 	private ItemDescription description;
 	private int quantity;
-	private final Amount unitPrice;
-	private final Amount unitVatTax;
+	private Amount unitPrice;
+	private Amount unitVatTax;
+
+	private boolean discounted = false;
+	private Discount discountType;
 
 	/**
 	 * Constructs a new <code>Item</code> and initializes its description and
@@ -33,8 +37,9 @@ public class Item {
 	}
 
 	/**
-	 * Returns an immutable container object with information about the specific items
-	 * accumulated price, purchased quantity and the item description for the item.
+	 * Returns an immutable container object with information about the specific
+	 * items accumulated price, purchased quantity and the item description for the
+	 * item.
 	 * 
 	 * @return A {@link PurchasedItemInformation} object.
 	 */
@@ -42,8 +47,9 @@ public class Item {
 		return new PurchasedItemInformation(this);
 	}
 
-	/** 
+	/**
 	 * Returns the total quantity of this item that has been sold.
+	 * 
 	 * @return the quantity as an <code>int</code>.
 	 */
 	public int getQuantity() {
@@ -52,6 +58,7 @@ public class Item {
 
 	/**
 	 * Returns the related item description to this item.
+	 * 
 	 * @return the related <code>ItemDescription</code>.
 	 */
 	public ItemDescription getItemDescription() {
@@ -59,7 +66,8 @@ public class Item {
 	}
 
 	/**
-	 * Returns the price per unit of this item.
+	 * Returns the price per unit of this item, VAT tax included.
+	 * 
 	 * @return the unit price as an <code>Amount</code>.
 	 */
 	public Amount getUnitPrice() {
@@ -68,10 +76,43 @@ public class Item {
 
 	/**
 	 * Returns the VAT tax per unit of this item.
+	 * 
 	 * @return the unit VAT tax as an <code>Amount</code>.
 	 */
 	public Amount getUnitVatTax() {
 		return unitVatTax;
+	}
+
+	/**
+	 * @return <code>true</code> if this item has a discounted price, otherwise
+	 *         <code>false</code>.
+	 */
+	public boolean getDiscountState() {
+		return discounted;
+	}
+
+	/**
+	 * @return the discount being applied to this object.
+	 */
+	public Discount getDiscount() {
+		return discountType;
+	}
+
+	/**
+	 * Applies the specified discount to this items unit price and vat tax.
+	 * 
+	 * @param discount The discount that should be applied.
+	 */
+	public void applyDiscount(Discount discount) {
+		if (!discounted) {
+			discountType = discount;
+			discounted = true;
+		}
+
+		Amount priceDiscount = unitPrice.multiply(discount.getRate());
+		Amount taxDiscount = unitVatTax.multiply(discount.getRate());
+		unitPrice = unitPrice.subtract(priceDiscount);
+		unitVatTax = unitVatTax.subtract(taxDiscount);
 	}
 
 	/**

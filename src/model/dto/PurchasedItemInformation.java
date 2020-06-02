@@ -1,6 +1,7 @@
 package model.dto;
 
 import integration.dbhandler.data.ItemDescription;
+import integration.dbhandler.discount.Discount;
 import model.pos.Item;
 import model.util.Amount;
 
@@ -15,6 +16,8 @@ public final class PurchasedItemInformation {
 	private final Amount unitPrice;
 	private final Amount unitVatTax;
 	private final int quantity;
+	private final boolean discounted;
+	private final Discount discountType;
 
 	/**
 	 * Constructs an <code>ItemInformation</code> and stores description, price and
@@ -29,6 +32,8 @@ public final class PurchasedItemInformation {
 		this.quantity = item.getQuantity();
 		this.accumulatedPrice = unitPrice.multiply(quantity);
 		this.accumulatedVatTax = unitVatTax.multiply(quantity);
+		this.discounted = item.getDiscountState();
+		this.discountType = item.getDiscount();
 	}
 
 	/**
@@ -84,7 +89,21 @@ public final class PurchasedItemInformation {
 	public int getQuantity() {
 		return quantity;
 	}
+	
+	/**
+	 * @return <code>true</code> if this item has a discounted price, otherwise
+	 *         <code>false</code>.
+	 */
+	public boolean getDiscountState() {
+		return discounted;
+	}
 
+	/**
+	 * @return the discount being applied to this object.
+	 */
+	public Discount getDiscount() {
+		return discountType;
+	}
 	/**
 	 * Compares an <code>Object</code> and an <code>ItemInformation</code> object.
 	 * 
@@ -111,6 +130,7 @@ public final class PurchasedItemInformation {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append(String.format("%-15s %-15s %s", description.getName(), quantity + "*" + unitPrice, accumulatedPrice));
+		if(discounted) sb.append(String.format("\n%46s", discountType.toString()));
 		return sb.toString();
 	}
 }

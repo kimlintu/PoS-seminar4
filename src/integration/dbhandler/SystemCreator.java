@@ -6,6 +6,7 @@ package integration.dbhandler;
 public class SystemCreator {
 	private InventorySystem inventorySystem;
 	private AccountingSystem accountingSystem;
+	private DiscountSystem discountSystem;
 	private SaleLog saleLog;
 	
 	private static final SystemCreator SYSTEM_CREATOR = new SystemCreator();
@@ -17,6 +18,7 @@ public class SystemCreator {
 	private SystemCreator() {
 		inventorySystem = new InventorySystem();
 		accountingSystem = new AccountingSystem();
+		discountSystem = new DiscountSystem();
 		saleLog = new SaleLog();
 	}
 	
@@ -36,6 +38,10 @@ public class SystemCreator {
 	 */
 	public AccountingSystem getAccountingSystem() {
 		return accountingSystem;
+	}
+	
+	public DiscountSystem getDiscountSystem() {
+		return discountSystem;
 	}
 	
 	/**

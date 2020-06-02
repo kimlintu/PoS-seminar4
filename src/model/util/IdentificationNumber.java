@@ -57,4 +57,11 @@ public class IdentificationNumber {
     	return "" + number;
     }
     
+    @Override
+    public int hashCode() {
+    	int result = (int) (number);
+    	
+    	return result;
+    }
+    
 }

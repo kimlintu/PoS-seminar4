@@ -1,16 +1,19 @@
 package controller;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 import integration.cashregister.CashRegister;
 import integration.dbhandler.AccountingSystem;
+import integration.dbhandler.DiscountSystem;
 import integration.dbhandler.InvalidItemIDException;
 import integration.dbhandler.InventoryException;
 import integration.dbhandler.InventorySystem;
 import integration.dbhandler.SaleLog;
 import integration.dbhandler.SystemCreator;
 import integration.dbhandler.data.ItemDescription;
+import integration.dbhandler.discount.Discount;
 import integration.printer.Printer;
 import model.dto.PriceInformation;
 import model.dto.PurchasedItemInformation;
@@ -27,6 +30,7 @@ import model.util.IdentificationNumber;
 public class Controller {
 	private InventorySystem inventorySystem;
 	private AccountingSystem accountingSystem;
+	private DiscountSystem discountSystem;
 	private SaleLog saleLog;
 
 	private Printer printer;
@@ -47,6 +51,7 @@ public class Controller {
 	public Controller(SystemCreator creator) {
 		inventorySystem = creator.getInventorySystem();
 		accountingSystem = creator.getAccountingSystem();
+		discountSystem = creator.getDiscountSystem();
 		saleLog = creator.getSaleLog();
 
 		printer = new Printer();
@@ -71,6 +76,17 @@ public class Controller {
 	 * @return Returns information about the total price, including total VAT tax.
 	 */
 	public PriceInformation endSale() {
+		return currentSale.getPriceInformation();
+	}
+	
+	/**
+	 * Applies discounts that are available for specific items.
+	 * @return the discounted price information.
+	 */
+	public PriceInformation applyDiscounts() {
+		Hashtable<IdentificationNumber, Discount> itemDiscounts = discountSystem.getDiscounts(currentSale.getImmutableItemList());
+		currentSale.applyItemDiscounts(itemDiscounts);
+		
 		return currentSale.getPriceInformation();
 	}
 
