@@ -65,7 +65,7 @@ class ItemTest {
 		Item item = new Item(description, quantity);
 		Amount originalUnitPrice = item.getUnitPrice();
 		
-		Discount discount = new QuantityDiscount((short) 3, new Amount(0.1));
+		Discount discount = new QuantityDiscount((short) 3, new Amount(0.2));
 		Amount discountPrice = (originalUnitPrice.multiply(discount.getRate())).multiply(quantity); 
 		Amount expectedDiscountedPrice = (originalUnitPrice.multiply(quantity)).subtract(discountPrice);
 		

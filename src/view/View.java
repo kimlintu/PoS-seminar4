@@ -124,7 +124,7 @@ public class View {
 
 		try {
 			for (int itemNr = 0; itemNr < itemIDs.length; itemNr++) {
-				int quantity = rand.nextInt(4) + 1;
+				int quantity = rand.nextInt(10) + 1;
 
 				System.out.println("*Purchasing " + quantity + " item(s) with id " + itemIDs[itemNr].toString() + "*");
 				RecentPurchaseInformation recentSaleInformation = enterItemIdentifier(itemIDs[itemNr], quantity);
