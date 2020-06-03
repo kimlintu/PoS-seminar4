@@ -77,6 +77,14 @@ public class View {
 	public void enterAmountPaid(Amount amountPaid) {
 		controller.processSale(amountPaid);
 	}
+	
+	/**
+	 * Apply available discounts to bought items.
+	 * @return the discounted price. 
+	 */
+	public PriceInformation applyDiscounts() {
+		return controller.applyDiscounts();
+	}
 
 	/**
 	 * A test run where no exceptions gets thrown.
@@ -135,7 +143,7 @@ public class View {
 			System.out.println("[" + totalPriceInfo + "]" + "\n");
 			
 			System.out.println("*Available discounts gets applied to purchased items*");
-			PriceInformation discountedPrice = controller.applyDiscounts();
+			PriceInformation discountedPrice = applyDiscounts();
 			System.out.println("[" + discountedPrice + "]" + "\n");
 			
 			Amount amountPaid = totalPriceInfo.getTotalPrice().add(new Amount(rand.nextDouble() * 100 + 1));
