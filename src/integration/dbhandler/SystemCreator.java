@@ -16,10 +16,10 @@ public class SystemCreator {
 	 * for the external systems.
 	 */
 	private SystemCreator() {
-		inventorySystem = new InventorySystem();
-		accountingSystem = new AccountingSystem();
-		discountSystem = new DiscountSystem();
-		saleLog = new SaleLog();
+		inventorySystem = InventorySystem.getSystem();
+		accountingSystem = AccountingSystem.getSystem();
+		discountSystem = DiscountSystem.getSystem();
+		saleLog = SaleLog.getSystem();
 	}
 	
 	/**

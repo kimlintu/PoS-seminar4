@@ -18,6 +18,7 @@ import integration.dbhandler.discount.QuantityDiscount;
 import model.dto.RecentPurchaseInformation;
 import model.pos.Item;
 import model.dto.PriceInformation;
+import model.dto.PurchasedItemInformation;
 import model.util.Amount;
 import model.util.IdentificationNumber;
 

@@ -7,10 +7,12 @@ import model.dto.Receipt;
  *
  */
 public class SaleLog {
+	private static final SaleLog SALE_LOG = new SaleLog();
+	
 	/**
 	 * Constructor.
 	 */
-	SaleLog() {
+	private SaleLog() {
 	}
 
 	/**
@@ -20,5 +22,12 @@ public class SaleLog {
 	 */
 	public void logSale(Receipt completedSaleInformation) {
 
+	}
+	
+	/**
+	 * @return the instance of this class as a singleton.
+	 */
+	public static SaleLog getSystem() {
+		return SALE_LOG;
 	}
 }

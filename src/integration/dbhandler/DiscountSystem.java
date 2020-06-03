@@ -16,11 +16,13 @@ import model.util.IdentificationNumber;
  */
 public class DiscountSystem {
 	private Hashtable<IdentificationNumber, Discount> itemDiscounts;
+	
+	private static final DiscountSystem DISCOUNT_SYSTEM = new DiscountSystem();
 
 	/**
 	 * Constructor. Creates a new table with items and their corresponding discounts.
 	 */
-	DiscountSystem() {
+	private DiscountSystem() {
 		itemDiscounts = new Hashtable<>();
 
 		itemDiscounts.put(new IdentificationNumber(666), new QuantityDiscount((short) 3, new Amount(0.1)));
@@ -48,5 +50,12 @@ public class DiscountSystem {
 		}
 
 		return availableDiscounts;
+	}
+	
+	/**
+	 * @return the instance of this class as a singleton.
+	 */
+	public static DiscountSystem getSystem() {
+		return DISCOUNT_SYSTEM;
 	}
 }

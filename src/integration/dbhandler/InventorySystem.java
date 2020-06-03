@@ -21,11 +21,13 @@ public class InventorySystem {
 	private final Amount stdVatRate = new Amount(0.16);
 
 	private final IdentificationNumber dbError = new IdentificationNumber(987987);
+	
+	private static final InventorySystem INVENTORY_SYSTEM = new InventorySystem();
 
 	/**
 	 * Constructs a new object and adds some data entries.
 	 */
-	InventorySystem() {
+	private InventorySystem() {
 		itemDB = new ArrayList<>();
 
 		createDatabaseEntry(new ItemData(
@@ -112,5 +114,12 @@ public class InventorySystem {
 
 	private void createDatabaseEntry(ItemData itemDataObject) {
 		itemDB.add(itemDataObject);
+	}
+	
+	/**
+	 * @return the instance of this class as a singleton.
+	 */
+	public static InventorySystem getSystem() {
+		return INVENTORY_SYSTEM;
 	}
 }
